@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kuis IPS Kelas VII: Paket 2 (30 Soal Baru)</title>
+  <style>
+    :root {
+      --bg-color: #f1f5f9;
+      --card-bg: #ffffff;
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --btn-option-bg: #f8fafc;
+      --btn-option-text: #1e293b;
+      --correct-bg: #22c55e;
+      --correct-text: #ffffff;
+      --wrong-bg: #ef4444;
+      --wrong-text: #ffffff;
+      --border-color: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 720px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+      padding: 30px;
+      position: relative;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      text-align: center;
+      margin-bottom: 8px;
+      color: var(--primary);
+    }
+
+    p.subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"], select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1rem;
+      color: var(--text-main);
+      background-color: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input[type="text"]:focus, select:focus {
+      border-color: var(--primary);
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 14px;
+      background-color: var(--primary);
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 600;
+      text-align: center;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+    }
+
+    .player-tag {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .timer-badge {
+      background-color: #fee2e2;
+      color: #b91c1c;
+      font-size: 1.1rem;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid #fca5a5;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background-color: var(--primary);
+      width: 0%;
+      transition: width 0.3s;
+    }
+
+    .question-box {
+      font-size: 1.12rem;
+      font-weight: 600;
+      line-height: 1.55;
+      margin-bottom: 22px;
+      color: var(--text-main);
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .opt-btn {
+      width: 100%;
+      padding: 14px 18px;
+      text-align: left;
+      font-size: 0.96rem;
+      font-weight: 500;
+      background-color: var(--btn-option-bg);
+      color: var(--btn-option-text);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.1s, background-color 0.2s, border-color 0.2s;
+    }
+
+    .opt-btn:hover:not(:disabled) {
+      background-color: #e2e8f0;
+      transform: translateY(-1px);
+    }
+
+    .opt-btn.correct {
+      background-color: var(--correct-bg) !important;
+      color: var(--correct-text) !important;
+      border-color: #16a34a !important;
+      font-weight: bold;
+    }
+
+    .opt-btn.wrong {
+      background-color: var(--wrong-bg) !important;
+      color: var(--wrong-text) !important;
+      border-color: #dc2626 !important;
+      font-weight: bold;
+    }
+
+    .next-btn-container {
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    #next-btn {
+      width: auto;
+      min-width: 130px;
+      padding: 10px 22px;
+    }
+
+    .result-summary {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .score-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: #f0f9ff;
+      border: 4px solid var(--primary);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 16px auto;
+      font-size: 2.1rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+
+    .review-container {
+      max-height: 380px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 20px;
+      background: #f8fafc;
+    }
+
+    .review-item {
+      padding: 12px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .review-item:last-child {
+      border-bottom: none;
+    }
+
+    .review-q {
+      font-weight: 600;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    .review-ans {
+      font-size: 0.88rem;
+      margin: 3px 0;
+    }
+
+    .review-ans.user-ans-correct {
+      color: #16a34a;
+      font-weight: 600;
+    }
+
+    .review-ans.user-ans-wrong {
+      color: #dc2626;
+      font-weight: 600;
+    }
+
+    .review-ans.correct-ans-highlight {
+      color: #0284c7;
+      font-weight: 600;
+    }
+
+    #confetti-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <!-- Screen 1: Form Registrasi -->
+    <div id="start-screen" class="screen active">
+      <h1>Kuis IPS Kelas VII (Paket 2)</h1>
+      <p class="subtitle">Prediksi Ujian: Pemahaman Peta & Agen/Tahap Sosialisasi</p>
+
+      <div class="form-group">
+        <label for="player-name">Nama Peserta Kuis:</label>
+        <input type="text" id="player-name" placeholder="Ketik nama lengkap Anda di sini..." autocomplete="off" />
+      </div>
+
+      <div class="form-group">
+        <label for="timer-select">Pilih Durasi Waktu Per Soal:</label>
+        <select id="timer-select">
+          <option value="15">15 Detik</option>
+          <option value="30" selected>30 Detik</option>
+        </select>
+      </div>
+
+      <button class="btn" id="start-btn">Mulai Kuis</button>
+    </div>
+
+    <!-- Screen 2: Tampilan Pertanyaan Kuis -->
+    <div id="quiz-screen" class="screen">
+      <div class="quiz-header">
+        <div class="player-tag" id="display-player">Peserta: -</div>
+        <div class="timer-badge" id="timer-display">⏱ 00</div>
+      </div>
+
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+
+      <div class="question-box" id="question-text">Memuat pertanyaan...</div>
+      <div class="options-grid" id="options-container"></div>
+
+      <div class="next-btn-container">
+        <button class="btn" id="next-btn" style="display: none;">Lanjut</button>
+      </div>
+    </div>
+
+    <!-- Screen 3: Hasil & Review Lengkap -->
+    <div id="result-screen" class="screen">
+      <h1>Hasil Akhir Kuis</h1>
+      <p class="subtitle" id="result-quiz-title">Kuis IPS Kelas VII (Paket 2): Peta & Sosialisasi</p>
+
+      <div class="result-summary">
+        <h3 id="result-player-name">Peserta: -</h3>
+        <div class="score-circle" id="score-circle">0</div>
+        <p id="result-detail">Benar: 0 / 30 Soal</p>
+      </div>
+
+      <h3 style="margin-bottom: 10px; font-size: 1.05rem;">Review Soal & Kunci Jawaban:</h3>
+      <div class="review-container" id="review-container"></div>
+
+      <button class="btn" id="restart-btn">Ulangi Kuis Baru</button>
+    </div>
+  </div>
+
+  <script>
+    // 30 Butir Soal Baru Prediksi Ujian (Berbeda dari paket sebelumnya)
+    const masterQuestions = [
+      {
+        q: "Ahli yang memiliki keahlian khusus dalam bidang pemetaan dan pembuatan peta disebut...",
+        options: ["Kartografer", "Geolog", "Klimatolog", "Demograf"],
+        ans: "Kartografer"
+      },
+      {
+        q: "Garis batas pinggir atau bingkai terluar yang terdapat pada sebuah peta dikenal dengan istilah...",
+        options: ["Border (Garis Tepi)", "Inset Peta", "Lettering", "Garis Astronomis"],
+        ans: "Border (Garis Tepi)"
+      },
+      {
+        q: "Garis khayal yang melingkari permukaan bumi dan terdiri atas garis lintang serta bujur (meridian) disebut...",
+        options: ["Garis Astronomis", "Garis Kontur", "Garis Khatulistiwa Saja", "Border"],
+        ans: "Garis Astronomis"
+      },
+      {
+        q: "Unsur peta yang bertujuan menunjukkan petunjuk arah mata angin atau orientasi adalah...",
+        options: ["Tanda Arah", "Legenda", "Judul", "Skala Peta"],
+        ans: "Tanda Arah"
+      },
+      {
+        q: "Tujuan dicantumkannya unsur tahun pembuatan pada sebuah peta adalah untuk mengetahui...",
+        options: ["Waktu pembuatan dan relevansi data", "Tingkat ketelitian kartografer", "Harga penjualan peta", "Luas bidang gambar peta"],
+        ans: "Waktu pembuatan dan relevansi data"
+      },
+      {
+        q: "Simbol visual yang bentuknya menyerupai benda atau kenampakan aslinya di lapangan digolongkan sebagai...",
+        options: ["Simbol Piktoral (gambar)", "Simbol Geometris", "Simbol Huruf", "Simbol Angka"],
+        ans: "Simbol Piktoral (gambar)"
+      },
+      {
+        q: "Simbol yang memanfaatkan bangun datar matematika seperti segitiga, kotak, dan lingkaran disebut...",
+        options: ["Simbol Geometris", "Simbol Piktoral", "Simbol Huruf", "Simbol Garis"],
+        ans: "Simbol Geometris"
+      },
+      {
+        q: "Pada peta, simbol singkatan huruf 'Tel' dipakai untuk menunjukkan kenampakan...",
+        options: ["Teluk", "Tebing", "Tanjung", "Terminal"],
+        ans: "Teluk"
+      },
+      {
+        q: "Singkatan huruf 'Kep' pada penulisan peta digunakan sebagai simbol wilayah...",
+        options: ["Kepulauan", "Kecamatan", "Kabupaten", "Kawah"],
+        ans: "Kepulauan"
+      },
+      {
+        q: "Berdasarkan legenda simbol titik, gambar segitiga berwarna merah pekat melambangkan...",
+        options: ["Gunung berapi aktif", "Gunung api tidak aktif / mati", "Ibukota provinsi", "Puncak salju"],
+        ans: "Gunung berapi aktif"
+      },
+      {
+        q: "Gambar segitiga hitam pekat pada peta digunakan untuk menyimbolkan...",
+        options: ["Gunung api tidak aktif / mati", "Gunung berapi aktif", "Bandar udara internasional", "Ibukota negara"],
+        ans: "Gunung api tidak aktif / mati"
+      },
+      {
+        q: "Simbol lingkaran dengan titik hitam di tengahnya pada peta biasanya menandakan...",
+        options: ["Ibu kota kabupaten / kota", "Ibu kota negara", "Ibu kota provinsi", "Kecamatan"],
+        ans: "Ibu kota kabupaten / kota"
+      },
+      {
+        q: "Simbol lingkaran dengan bulatan warna merah penuh di dalamnya digunakan untuk melambangkan...",
+        options: ["Ibu kota provinsi", "Ibu kota negara", "Pelabuhan laut", "Bandar udara"],
+        ans: "Ibu kota provinsi"
+      },
+      {
+        q: "Simbol persegi panjang merah pada peta wilayah menandakan kenampakan...",
+        options: ["Ibu kota negara", "Batas negara", "Pusat kecamatan", "Pelabuhan laut"],
+        ans: "Ibu kota negara"
+      },
+      {
+        q: "Batas negara, batas provinsi, dan batas daerah digambarkan menggunakan pengelompokan...",
+        options: ["Simbol Garis", "Simbol Luasan", "Simbol Piktoral", "Simbol Geometris"],
+        ans: "Simbol Garis"
+      },
+      {
+        q: "Relief bentang alam dataran tinggi atau plato pada peta diidentifikasi dengan warna...",
+        options: ["Kuning", "Hijau", "Coklat", "Biru Tua"],
+        ans: "Kuning"
+      },
+      {
+        q: "Daerah pegunungan dan perbukitan tinggi pada peta diwarnai dengan...",
+        options: ["Coklat", "Kuning", "Hijau", "Putih"],
+        ans: "Coklat"
+      },
+      {
+        q: "Zona perairan perairan dangkal pada peta ditunjukkan dengan pewarnaan...",
+        options: ["Biru Muda", "Biru Tua", "Putih", "Hijau"],
+        ans: "Biru Muda"
+      },
+      {
+        q: "Peta umum yang menampilkan gambaran relief permukaan bumi luas seperti benua dan dunia disebut...",
+        options: ["Peta Chorografi", "Peta Topografi", "Peta Kadaster", "Peta Tematik"],
+        ans: "Peta Chorografi"
+      },
+      {
+        q: "Peta tingkat kecamatan dengan rentang perbandingan skala 1 : 250.001 sampai 1 : 500.000 termasuk...",
+        options: ["Peta Skala Sedang", "Peta Skala Besar", "Peta Skala Kadaster", "Peta Skala Kecil"],
+        ans: "Peta Skala Sedang"
+      },
+      {
+        q: "Mengapa peta berskala geografis (< 1 : 1.000.000) mampu memuat wilayah yang sangat luas?",
+        options: ["Karena angka perbandingan skalanya kecil sehingga cakupan wilayahnya semakin lebar", "Karena detail objek digambar sangat besar", "Karena menggunakan warna yang lebih banyak", "Karena tidak membutuhkan garis bujur"],
+        ans: "Karena angka perbandingan skalanya kecil sehingga cakupan wilayahnya semakin lebar"
+      },
+      {
+        q: "Skala peta berbentuk ruas garis atau batang terbagi (grafis) menunjukkan 1 cm bernilai 5 km. Nilai skala angka numeriknya adalah...",
+        options: ["1 : 500.000", "1 : 50.000", "1 : 5.000.000", "1 : 5.000"],
+        ans: "1 : 500.000"
+      },
+      {
+        q: "Jarak sebenarnya dua kota adalah 25 km (2.500.000 cm). Jika digambar pada peta berskala 1 : 500.000, maka jarak pada peta adalah...",
+        options: ["5 cm", "2,5 cm", "10 cm", "50 cm"],
+        ans: "5 cm"
+      },
+      {
+        q: "Pada tahap sosialisasi meniru (play stage), perkembangan sikap seorang anak ditandai dengan...",
+        options: ["Semakin meniru dan mempraktikkan peran orang dewasa", "Melakukan tiruan yang belum sempurna sama sekali", "Sudah memahami norma kolektif secara utuh", "Mampu mengambil keputusan hukum secara mandiri"],
+        ans: "Semakin meniru dan mempraktikkan peran orang dewasa"
+      },
+      {
+        q: "Tahapan sosialisasi di mana seorang anak mulai memahami norma sosial secara bertahap dinamakan...",
+        options: ["Tahap Siap Bertindak", "Tahap Persiapan", "Tahap Meniru", "Tahap Sosialisasi Formal"],
+        ans: "Tahap Siap Bertindak"
+      },
+      {
+        q: "Alasan mendasar mengapa keluarga disebut sebagai 'sekolah pertama' bagi seorang anak adalah karena...",
+        options: ["Keluarga merupakan tempat sosialisasi primer yang meletakkan fondasi dasar kepribadian", "Keluarga mengeluarkan ijazah kelulusan formal", "Di dalam keluarga anak diajarkan teori sains tingkat tinggi", "Keluarga merupakan institusi berskala nasional"],
+        ans: "Keluarga merupakan tempat sosialisasi primer yang meletakkan fondasi dasar kepribadian"
+      },
+      {
+        q: "Kelompok teman sebaya saat bermain dan berinteraksi sehari-hari berperan sebagai agen sosialisasi...",
+        options: ["Teman Sepermainan", "Lingkungan Kerja", "Sosialisasi Formal", "Media Massa"],
+        ans: "Teman Sepermainan"
+      },
+      {
+        q: "Televisi, koran, majalah, radio, dan internet digolongkan ke dalam agen sosialisasi...",
+        options: ["Media Massa", "Sekolah", "Lingkungan Kerja", "Keluarga"],
+        ans: "Media Massa"
+      },
+      {
+        q: "Proses sosialisasi yang berlangsung secara tertib di sekolah melalui kurikulum dan tata tertib terstruktur termasuk jenis...",
+        options: ["Sosialisasi Formal", "Sosialisasi Informal", "Sosialisasi Primer", "Sosialisasi Non-normatif"],
+        ans: "Sosialisasi Formal"
+      },
+      {
+        q: "Kegiatan bersosialisasi di dalam komunitas hobi atau kelompok ronda warga bersifat santai tanpa aturan tertulis resmi, tergolong ke dalam...",
+        options: ["Sosialisasi Informal", "Sosialisasi Formal", "Sosialisasi Kadaster", "Sosialisasi Akademik"],
+        ans: "Sosialisasi Informal"
+      }
+    ];
+
+    let playerName = "";
+    let questionDuration = 30;
+    let questions = [];
+    let currentIndex = 0;
+    let timer = null;
+    let timeLeft = 0;
+    let userAnswers = [];
+    let answeredCurrent = false;
+
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const resultScreen = document.getElementById('result-screen');
+    const playerNameInput = document.getElementById('player-name');
+    const timerSelect = document.getElementById('timer-select');
+    const startBtn = document.getElementById('start-btn');
+    const displayPlayer = document.getElementById('display-player');
+    const timerDisplay = document.getElementById('timer-display');
+    const progressBar = document.getElementById('progress-bar');
+    const questionText = document.getElementById('question-text');
+    const optionsContainer = document.getElementById('options-container');
+    const nextBtn = document.getElementById('next-btn');
+    const scoreCircle = document.getElementById('score-circle');
+    const resultPlayerName = document.getElementById('result-player-name');
+    const resultDetail = document.getElementById('result-detail');
+    const reviewContainer = document.getElementById('review-container');
+    const restartBtn = document.getElementById('restart-btn');
+
+    function shuffleArray(arr) {
+      const array = [...arr];
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let confettiParticles = [];
+    let confettiAnimationId = null;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    function triggerConfetti() {
+      confettiParticles = [];
+      const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6'];
+      for (let i = 0; i < 90; i++) {
+        confettiParticles.push({
+          x: canvas.width / 2,
+          y: canvas.height * 0.4,
+          r: Math.random() * 6 + 3,
+          d: Math.random() * 50,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          vx: (Math.random() - 0.5) * 12,
+          vy: Math.random() * -10 - 4,
+          gravity: 0.35,
+          opacity: 1
+        });
+      }
+      if (!confettiAnimationId) {
+        animateConfetti();
+      }
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      confettiParticles.forEach((p, idx) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += p.gravity;
+        p.opacity -= 0.015;
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2, false);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = Math.max(p.opacity, 0);
+        ctx.fill();
+
+        if (p.opacity <= 0) {
+          confettiParticles.splice(idx, 1);
+        }
+      });
+      ctx.globalAlpha = 1;
+
+      if (confettiParticles.length > 0) {
+        confettiAnimationId = requestAnimationFrame(animateConfetti);
+      } else {
+        cancelAnimationFrame(confettiAnimationId);
+        confettiAnimationId = null;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    startBtn.addEventListener('click', () => {
+      const name = playerNameInput.value.trim();
+      if (!name) {
+        alert("Silakan masukkan nama peserta kuis terlebih dahulu!");
+        return;
+      }
+      playerName = name;
+      questionDuration = parseInt(timerSelect.value, 10);
+
+      questions = shuffleArray(masterQuestions).map(qItem => ({
+        q: qItem.q,
+        options: shuffleArray(qItem.options),
+        ans: qItem.ans
+      }));
+
+      currentIndex = 0;
+      userAnswers = [];
+      displayPlayer.innerText = `Peserta: ${playerName}`;
+
+      startScreen.classList.remove('active');
+      resultScreen.classList.remove('active');
+      quizScreen.classList.add('active');
+
+      loadQuestion();
+    });
+
+    function loadQuestion() {
+      clearInterval(timer);
+      answeredCurrent = false;
+      nextBtn.style.display = 'none';
+
+      const currentQ = questions[currentIndex];
+      questionText.innerText = `${currentIndex + 1}. ${currentQ.q}`;
+      progressBar.style.width = `${((currentIndex) / questions.length) * 100}%`;
+
+      optionsContainer.innerHTML = '';
+      currentQ.options.forEach((optText) => {
+        const btn = document.createElement('button');
+        btn.className = 'opt-btn';
+        btn.innerText = optText;
+        btn.addEventListener('click', () => selectAnswer(btn, optText, currentQ.ans));
+        optionsContainer.appendChild(btn);
+      });
+
+      timeLeft = questionDuration;
+      timerDisplay.innerText = `⏱ ${timeLeft}s`;
+
+      timer = setInterval(() => {
+        timeLeft--;
+        timerDisplay.innerText = `⏱ ${timeLeft}s`;
+        if (timeLeft <= 0) {
+          clearInterval(timer);
+          handleTimeOut();
+        }
+      }, 1000);
+    }
+
+    function selectAnswer(buttonElement, chosenAns, correctAns) {
+      if (answeredCurrent) return;
+      answeredCurrent = true;
+      clearInterval(timer);
+
+      const allButtons = optionsContainer.querySelectorAll('.opt-btn');
+      allButtons.forEach(b => b.disabled = true);
+
+      const isCorrect = (chosenAns === correctAns);
+
+      if (isCorrect) {
+        buttonElement.classList.add('correct');
+        triggerConfetti();
+      } else {
+        buttonElement.classList.add('wrong');
+        allButtons.forEach(b => {
+          if (b.innerText === correctAns) {
+            b.classList.add('correct');
+          }
+        });
+      }
+
+      userAnswers.push({
+        question: questions[currentIndex].q,
+        userAns: chosenAns,
+        correctAns: correctAns,
+        isCorrect: isCorrect
+      });
+
+      nextBtn.style.display = 'block';
+    }
+
+    function handleTimeOut() {
+      answeredCurrent = true;
+      const allButtons = optionsContainer.querySelectorAll('.opt-btn');
+      allButtons.forEach(b => b.disabled = true);
+
+      const correctAns = questions[currentIndex].ans;
+      allButtons.forEach(b => {
+        if (b.innerText === correctAns) {
+          b.classList.add('correct');
+        }
+      });
+
+      userAnswers.push({
+        question: questions[currentIndex].q,
+        userAns: "Waktu Habis (Tidak Menjawab)",
+        correctAns: correctAns,
+        isCorrect: false
+      });
+
+      nextBtn.style.display = 'block';
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex++;
+      if (currentIndex < questions.length) {
+        loadQuestion();
+      } else {
+        finishQuiz();
+      }
+    });
+
+    function finishQuiz() {
+      clearInterval(timer);
+      quizScreen.classList.remove('active');
+      resultScreen.classList.add('active');
+
+      const correctCount = userAnswers.filter(a => a.isCorrect).length;
+      const totalScore = Math.round((correctCount / questions.length) * 100);
+
+      resultPlayerName.innerText = `Peserta: ${playerName}`;
+      scoreCircle.innerText = totalScore;
+      resultDetail.innerText = `Skor: ${totalScore} | Benar ${correctCount} dari ${questions.length} Soal`;
+
+      reviewContainer.innerHTML = '';
+      userAnswers.forEach((ans, idx) => {
+        const item = document.createElement('div');
+        item.className = 'review-item';
+
+        const qTitle = document.createElement('div');
+        qTitle.className = 'review-q';
+        qTitle.innerText = `${idx + 1}. ${ans.question}`;
+
+        const userAnsLine = document.createElement('div');
+        userAnsLine.className = `review-ans ${ans.isCorrect ? 'user-ans-correct' : 'user-ans-wrong'}`;
+        userAnsLine.innerText = `Jawaban Anda: ${ans.userAns} ${ans.isCorrect ? '✔' : '✖'}`;
+
+        item.appendChild(qTitle);
+        item.appendChild(userAnsLine);
+
+        if (!ans.isCorrect) {
+          const correctAnsLine = document.createElement('div');
+          correctAnsLine.className = 'review-ans correct-ans-highlight';
+          correctAnsLine.innerText = `Kunci Jawaban: ${ans.correctAns}`;
+          item.appendChild(correctAnsLine);
+        }
+
+        reviewContainer.appendChild(item);
+      });
+    }
+
+    restartBtn.addEventListener('click', () => {
+      resultScreen.classList.remove('active');
+      startScreen.classList.add('active');
+    });
+  </script>
+</body>
+</html>
